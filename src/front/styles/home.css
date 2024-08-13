@@ -1,7 +1,154 @@
-/*
-    home.css: This website contains selectors only used in home.css
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+h1, h2, h3, p {
+    color: #343a40;
+}
+
+/* Sección de autenticación */
+.auth-section {
+    position: fixed;
+    top: 20px; /* Espacio desde la parte superior de la pantalla */
+    right: 20px; /* Espacio desde la parte derecha de la pantalla */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+.auth-section .btn {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-bottom: 10px; /* Espacio entre los botones */
+}
+
+.auth-section .btn:hover {
+    background-color: #0056b3;
+}
+
+/* Sección superior */
+.top {
+    background-color: #e9ecef;
+    padding: 40px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    margin-top: 80px; /* Espacio para evitar solapamiento con botones fijos */
+}
+
+.top h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.top p {
+    font-size: 18px;
+    margin: 0;
+}
+
+/* Sección media */
+.mid {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+}
+
+.mid-content {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 20px;
+    width: 30%;
+    text-align: left;
+}
+
+.mid-content h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.mid-content p {
+    font-size: 16px;
+    color: #6c757d;
+}
+
+.mid-content .btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.mid-content .btn:hover {
+    background-color: #218838;
+}
+
+/* Sección inferior */
+.low {
+    text-align: center;
+}
+
+.low h1 {
+    font-size: 32px;
+    margin-bottom: 40px;
+}
+
+.low .item {
+    display: block;
+    width: 80%;
+    margin: 0 auto 40px; /* Espacio entre los elementos */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgb(230, 230, 230);
+    background: white
+}
+
+.low .item img {
+    max-width: 100px; /* Tamaño de la imagen */
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.low .item h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.low .item p {
+    font-size: 16px;
+    color: #6c757d;
+}
+
+
+.low .item p {
+ 
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .mid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mid-content {
+        width: 80%;
+        margin-bottom: 20px;
+    }
+
+    .low .item {
+        width: 80%;
+        margin-bottom: 20px;
+    }
+
+    .auth-section {
+        top: 10px;
+        right: 10px;
+    }
+}
+
+}
