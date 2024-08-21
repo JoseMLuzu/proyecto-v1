@@ -1,54 +1,195 @@
 const getState = ({ getStore, getActions, setStore }) => {
-	return {
-		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
-		},
-		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
+    return {
+        store: {
+            message: null,
+            demo: [
+                { title: "FIRST", background: "white", initial: "white" },
+                { title: "SECOND", background: "white", initial: "white" }
+            ],
+            token: localStorage.getItem('token') || null,
+            user: (() => {
+                const user = localStorage.getItem('user');
+                if (user) {
+                    try {
+                        return JSON.parse(user);
+                    } catch (error) {
+                        console.error("Error parsing user JSON:", error);
+                        return null;
+                    }
+                }
+                return null;
+            })(),
+            cryptoData: [],
+            favorites: (() => {
+                const favorites = localStorage.getItem('favorites');
+                try {
+                    return new Set(favorites ? JSON.parse(favorites) : []);
+                } catch (error) {
+                    console.error("Error parsing favorites JSON:", error);
+                    return new Set();
+                }
+            })(),
+            orderBy: 'market_cap_desc',
+            searchQuery: '',
+            loading: false,
+            error: null
+        },
+        actions: {
+            registerUser: async (username, email, password) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, email, password })
+                    });
 
-			getMessage: async () => {
-				try{
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
-					return data;
-				}catch(error){
-					console.log("Error loading message from backend", error)
-				}
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
+                    const result = await response.json();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+                    if (response.ok) {
+                        return { success: true };
+                    } else {
+                        return { success: false, message: result.message };
+                    }
+                } catch (error) {
+                    console.error("Error registering user:", error);
+                    return { success: false, message: "Network error" };
+                }
+            },
 
-				//reset the global store
-				setStore({ demo: demo });
-			}
-		}
-	};
+            loginUser: async (email, password) => {
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        setStore({ 
+                            token: result.access_token,
+                            user: result.user 
+                        });
+                        localStorage.setItem('token', result.access_token);
+                        localStorage.setItem('user', JSON.stringify(result.user));
+                        return { success: true };
+                    } else {
+                        return { success: false, message: result.message };
+                    }
+                } catch (error) {
+                    console.error("Error logging in user:", error);
+                    return { success: false, message: "Network error" };
+                }
+            },
+
+            logoutUser: () => {
+                setStore({ token: null, user: null });
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+            },
+
+            getMessage: async () => {
+                try {
+                    const resp = await fetch(`${process.env.BACKEND_URL}/api/hello`, {
+                        headers: {
+                            'Authorization': `Bearer ${getStore().token}`
+                        }
+                    });
+                    const data = await resp.json();
+                    setStore({ message: data.message });
+                    return data;
+                } catch (error) {
+                    console.log("Error loading message from backend", error);
+                }
+            },
+
+            changeColor: (index, color) => {
+                const store = getStore();
+                const demo = store.demo.map((elm, i) => {
+                    if (i === index) elm.background = color;
+                    return elm;
+                });
+                setStore({ demo });
+            },
+
+            checkToken: () => {
+                const token = localStorage.getItem('token');
+                const user = (() => {
+                    const user = localStorage.getItem('user');
+                    if (user) {
+                        try {
+                            return JSON.parse(user);
+                        } catch (error) {
+                            console.error("Error parsing user JSON:", error);
+                            return null;
+                        }
+                    }
+                    return null;
+                })();
+                if (token) {
+                    setStore({ token, user });
+                }
+            },
+
+            fetchCryptoData: async () => {
+                const store = getStore();
+                setStore({ loading: true, error: null });
+                const apiUrl = 'https://api.coingecko.com/api/v3/coins/markets';
+                const params = {
+                    vs_currency: 'usd',
+                    order: store.orderBy,
+                    per_page: 60,
+                    page: 1,
+                    sparkline: true
+                };
+
+                try {
+                    const response = await fetch(`${apiUrl}?${new URLSearchParams(params)}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const data = await response.json();
+                    setStore({ cryptoData: data });
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    setStore({ error: error.message });
+                } finally {
+                    setStore({ loading: false });
+                }
+            },
+
+            setOrderBy: (orderBy) => {
+                setStore({ orderBy });
+                getActions().fetchCryptoData();
+            },
+
+            setSearchQuery: (searchQuery) => {
+                setStore({ searchQuery });
+            },
+
+            toggleFavorite: (cryptoId) => {
+                const store = getStore();
+                const newFavorites = new Set(store.favorites);
+                if (newFavorites.has(cryptoId)) {
+                    newFavorites.delete(cryptoId);
+                } else {
+                    newFavorites.add(cryptoId);
+                }
+                setStore({ favorites: newFavorites });
+                localStorage.setItem('favorites', JSON.stringify([...newFavorites]));
+            },
+
+            getFavoriteCryptos: () => {
+                const store = getStore();
+                return store.cryptoData.filter(crypto => store.favorites.has(crypto.id));
+            }
+        }
+    };
 };
 
 export default getState;

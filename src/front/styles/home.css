@@ -6,16 +6,43 @@ body {
     padding: 0;
 }
 
-h1, h2, h3, p {
+footer {
+    background-color: #000000;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.yellow {
+    color: rgb(242, 180, 87)
+}
+
+p {
+    color: white;
+}
+
+h1 {
+    color: white;
+}
+
+h2,
+h3 {
     color: #343a40;
+}
+
+.tittleLow {
+    color: black;
 }
 
 /* Sección de autenticación */
 .auth-section {
     position: fixed;
-    top: 20px; /* Espacio desde la parte superior de la pantalla */
-    right: 20px; /* Espacio desde la parte derecha de la pantalla */
-    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    top: 20px;
+    /* Espacio desde la parte superior de la pantalla */
+    right: 20px;
+    /* Espacio desde la parte derecha de la pantalla */
+    z-index: 1000;
+    /* Asegura que esté por encima de otros elementos */
 }
 
 .auth-section .btn {
@@ -23,7 +50,8 @@ h1, h2, h3, p {
     color: #fff;
     border-radius: 5px;
     padding: 10px 20px;
-    margin-bottom: 10px; /* Espacio entre los botones */
+    margin-bottom: 10px;
+    /* Espacio entre los botones */
 }
 
 .auth-section .btn:hover {
@@ -32,11 +60,16 @@ h1, h2, h3, p {
 
 /* Sección superior */
 .top {
-    background-color: #e9ecef;
+    background-color: #000000;
     padding: 40px 20px;
-    border-radius: 10px;
     margin-bottom: 20px;
-    margin-top: 80px; /* Espacio para evitar solapamiento con botones fijos */
+    text-align: left;
+    flex: 1 1 0%;
+    max-width: 100%;
+    gap: 32px;
+    flex-direction: column;
+    display: flex;
+    /* Espacio para evitar solapamiento con botones fijos */
 }
 
 .top h2 {
@@ -99,7 +132,8 @@ h1, h2, h3, p {
 .low .item {
     display: block;
     width: 80%;
-    margin: 0 auto 40px; /* Espacio entre los elementos */
+    margin: 0 auto 40px;
+    /* Espacio entre los elementos */
     background-color: white;
     padding: 20px;
     border-radius: 8px;
@@ -108,7 +142,8 @@ h1, h2, h3, p {
 }
 
 .low .item img {
-    max-width: 100px; /* Tamaño de la imagen */
+    max-width: 100px;
+    /* Tamaño de la imagen */
     height: auto;
     border-radius: 10px;
     margin-bottom: 15px;
@@ -126,29 +161,35 @@ h1, h2, h3, p {
 
 
 .low .item p {
- 
 
-/* Responsividad */
-@media (max-width: 768px) {
-    .mid {
-        flex-direction: column;
-        align-items: center;
+    .firstTittle {
+        font-size: 54px;
+        line-height: 110%;
+        color: white;
     }
 
-    .mid-content {
-        width: 80%;
-        margin-bottom: 20px;
-    }
 
-    .low .item {
-        width: 80%;
-        margin-bottom: 20px;
-    }
+    /* Responsividad */
+    @media (max-width: 768px) {
+        .mid {
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .auth-section {
-        top: 10px;
-        right: 10px;
+        .mid-content {
+            width: 80%;
+            margin-bottom: 20px;
+        }
+
+        .low .item {
+            width: 80%;
+            margin-bottom: 20px;
+        }
+
+        .auth-section {
+            top: 10px;
+            right: 10px;
+        }
     }
-}
 
 }
