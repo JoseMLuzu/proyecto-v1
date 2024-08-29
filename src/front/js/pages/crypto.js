@@ -6,27 +6,23 @@ import '../../styles/crypto.css';
 
 function CryptoApp() {
   const { store, actions } = useContext(Context);
-  const [showTopButton, setShowTopButton] = useState(false); // Estado para controlar la visibilidad del botón
+  const [showTopButton, setShowTopButton] = useState(false);
 
   useEffect(() => {
-    actions.fetchCryptoData(); // Fetch crypto data on component mount
-  }, [store.orderBy]); // Fetch new data when orderBy changes
+    actions.fetchCryptoData(); // Fetch crypto data on component mount and when selectedCurrency changes
+  }, [store.orderBy, store.selectedCurrency]);
 
-  // Event listener para el scroll
   useEffect(() => {
     const handleScroll = () => {
-      // Mostrar el botón si el usuario ha bajado más de 100 píxeles
-      if (window.scrollY > 100) {
+      if (window.scrollY > 10) {
         setShowTopButton(true);
       } else {
         setShowTopButton(false);
       }
     };
 
-    // Agregar el listener al scroll
     window.addEventListener('scroll', handleScroll);
 
-    // Limpiar el listener cuando el componente se desmonte
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -61,7 +57,6 @@ function CryptoApp() {
     }]
   });
 
-  // Función para desplazarse hacia arriba
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -100,72 +95,48 @@ function CryptoApp() {
         </div>
       </div>
       {store.loading ? (
-        <div>Loading...</div>
+        <div className="text-center">Loading...</div>
       ) : store.error ? (
-        <div>Error: {store.error}</div>
+        <div className="text-center">Error loading data: {store.error.message}</div>
       ) : (
         <div className="row">
-          {sortedCryptoData.map(crypto => (
-            <div key={crypto.id} className="col-md-4 mb-4">
-              <div className="card">
-                <img
-                  src={crypto.image}
-                  className="card-img-top mt-2"
-                  alt={crypto.name}
-                  style={{ width: '50px', height: '50px', margin: 'auto' }}
-                />
+          {sortedCryptoData.map((crypto) => (
+            <div key={crypto.id} className="col-12 col-sm-6 col-md-4 mb-4">
+              <div className="card h-100">
                 <div className="card-body">
-                  <h5 className="card-title">{crypto.name}</h5>
+                  <div className="d-flex align-items-center mb-4">
+                    <img
+                      src={crypto.image}
+                      alt={`${crypto.name} logo`}
+                      className="crypto-icon me-3"
+                      style={{ width: '30px', height: '30px' }}
+                    />
+                    <h5 className="card-title">{crypto.name}</h5>
+                  </div>
                   <p className="card-text">Price: ${crypto.current_price.toFixed(2)}</p>
-                  {crypto.sparkline_in_7d && (
-                    <div style={{ height: '50px' }}>
-                      <Line
-                        data={generateSparklineData(crypto.sparkline_in_7d.price)}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          scales: {
-                            x: { display: false },
-                            y: { display: false },
-                          },
-                          plugins: {
-                            legend: { display: false },
-                            tooltip: { enabled: false },
-                          },
-                          elements: { line: { tension: 0.1 } }
-                        }}
-                        height={50}
-                      />
-                    </div>
-                  )}
-                  <a
-                    href={`https://www.coingecko.com/en/coins/${crypto.id}`}
-                    target="_blank"
+                  <p className="card-text">Market Cap: ${crypto.market_cap.toLocaleString()}</p>
+                  <p className="card-text">24h High: ${crypto.high_24h.toFixed(2)}</p>
+                  <p className="card-text">24h Low: ${crypto.low_24h.toFixed(2)}</p>
+                  <div className="mb-3">
+                    <Line data={generateSparklineData(crypto.sparkline_in_7d.price)} options={{ responsive: true }} />
+                  </div>
+                  <a 
+                    href={`https://www.coingecko.com/en/coins/${crypto.id}`} 
+                    target="_blank" 
                     rel="noopener noreferrer"
-                    className="btn btn-primary mt-2"
+                    className="btn btn-primary mt-2 w-100"
                   >
                     View on CoinGecko
                   </a>
-                  <button
-                    className={`btn ${store.favorites.has(crypto.id) ? 'btn-danger' : 'btn-outline-danger'} mt-2 ms-2`}
-                    onClick={() => actions.toggleFavorite(crypto.id)}
-                  >
-                    {store.favorites.has(crypto.id) ? 'Unfavorite' : 'Favorite'}
-                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
-      {/* Botón para subir al tope de la página */}
       {showTopButton && (
-        <button
-          onClick={scrollToTop}
-          className="btn btn-outline-secondary"
-          style={{ position: 'fixed', bottom: '20px', right: '20px' }}
-        >
-          Top
+        <button onClick={scrollToTop} className="btn btn-primary scroll-to-top buttonTop">
+          Scroll to Top
         </button>
       )}
     </div>

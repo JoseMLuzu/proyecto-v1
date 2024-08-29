@@ -7,16 +7,16 @@ export const Footer = () => (
 			<div className="row">
 				<div className="col-md-4">
 					<h5>About Us</h5>
-					<p>
+					<p className="aboutUs">
 						We provide comprehensive financial management tools to help you track and analyze your investments and expenses.
 					</p>
 				</div>
 				<div className="col-md-4">
 					<h5>Quick Links</h5>
 					<ul className="list-unstyled">
-						<li><a href="/cryptos">Cryptos</a></li>
+						<li><a href="/dashboard">Dashboard</a></li>
+						<li><a href="/crypto">Cryptos</a></li>
 						<li><a href="/stocks">Stocks</a></li>
-						<li><a href="/services">Services</a></li>
 						<li><a href="/contact">Contact Us</a></li>
 					</ul>
 				</div>
@@ -29,7 +29,7 @@ export const Footer = () => (
 				</div>
 			</div>
 			<hr className="my-3" />
-			<p className="mb-0">
+			<p className="mb-0 rights">
 				&copy; {new Date().getFullYear()} Your Company. All Rights Reserved.
 			</p>
 			

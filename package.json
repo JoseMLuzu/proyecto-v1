@@ -74,6 +74,7 @@
 	},
 	"dependencies": {
 		"chart.js": "^4.4.3",
+		"lucide-react": "^0.436.0",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-chartjs-2": "^5.2.0",

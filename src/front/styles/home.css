@@ -25,14 +25,55 @@ h1 {
     color: white;
 }
 
-h2,
-h3 {
+h2, h3 {
     color: #343a40;
 }
 
-.tittleLow {
-    color: black;
+img {
+    max-width: 400px;
+    max-height: 400px;
+    text-align: right;
 }
+
+.icon2{
+    height: 250px;
+    width: 290px;
+}
+
+.firstTittle {
+    font-size: 70px;
+    line-height: 110%;
+    color: white;
+}
+
+.secondTittle {
+    font-size: 54px;
+    line-height: 110%;
+    color: white;
+}
+
+.text-center {
+    text-align: left;
+}
+
+.downTittle {
+    color: white;
+    font-size: 50px;
+    padding-bottom: 50px;
+}
+
+.downText {
+    color: white;
+    font-size: 40px;
+}
+
+.tittleLow {
+    font-size: 50px;
+    line-height: 110%;
+    color: black;
+    padding-bottom: 40px;
+}
+
 
 /* Sección de autenticación */
 .auth-section {
@@ -56,6 +97,10 @@ h3 {
 
 .auth-section .btn:hover {
     background-color: #0056b3;
+}
+
+.user-reviews{
+    background-color: black;
 }
 
 /* Sección superior */
@@ -94,7 +139,6 @@ h3 {
     border: 1px solid #ced4da;
     border-radius: 10px;
     padding: 20px;
-    width: 30%;
     text-align: left;
 }
 
@@ -124,10 +168,6 @@ h3 {
     text-align: center;
 }
 
-.low h1 {
-    font-size: 32px;
-    margin-bottom: 40px;
-}
 
 .low .item {
     display: block;

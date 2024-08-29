@@ -11,9 +11,16 @@ const getState = ({ getStore, getActions, setStore }) => {
                 const user = localStorage.getItem('user');
                 if (user) {
                     try {
-                        return JSON.parse(user);
+                        // Validar que el JSON es un objeto y no una cadena o un número
+                        const parsedUser = JSON.parse(user);
+                        if (typeof parsedUser === 'object' && parsedUser !== null) {
+                            return parsedUser;
+                        } else {
+                            throw new Error('Parsed user is not an object');
+                        }
                     } catch (error) {
                         console.error("Error parsing user JSON:", error);
+                        localStorage.removeItem('user'); // Elimina datos corruptos
                         return null;
                     }
                 }
@@ -22,12 +29,22 @@ const getState = ({ getStore, getActions, setStore }) => {
             cryptoData: [],
             favorites: (() => {
                 const favorites = localStorage.getItem('favorites');
-                try {
-                    return new Set(favorites ? JSON.parse(favorites) : []);
-                } catch (error) {
-                    console.error("Error parsing favorites JSON:", error);
-                    return new Set();
+                if (favorites) {
+                    try {
+                        // Validar que el JSON es un array
+                        const parsedFavorites = JSON.parse(favorites);
+                        if (Array.isArray(parsedFavorites)) {
+                            return new Set(parsedFavorites);
+                        } else {
+                            throw new Error('Parsed favorites is not an array');
+                        }
+                    } catch (error) {
+                        console.error("Error parsing favorites JSON:", error);
+                        localStorage.removeItem('favorites'); // Elimina datos corruptos
+                        return new Set();
+                    }
                 }
+                return new Set();
             })(),
             orderBy: 'market_cap_desc',
             searchQuery: '',
@@ -35,14 +52,14 @@ const getState = ({ getStore, getActions, setStore }) => {
             error: null
         },
         actions: {
-            registerUser: async (username, email, password) => {
+            registerUser: async (username, email, password, confirmPassword) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/register`, {
+                    const response = await fetch(`https://zany-cod-977rxw469x7qfx4qw-3001.app.github.dev/api/register`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ username, email, password })
+                        body: JSON.stringify({ username, email, password, confirmPassword })
                     });
 
                     const result = await response.json();
@@ -123,9 +140,16 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const user = localStorage.getItem('user');
                     if (user) {
                         try {
-                            return JSON.parse(user);
+                            // Validar que el JSON es un objeto y no una cadena o un número
+                            const parsedUser = JSON.parse(user);
+                            if (typeof parsedUser === 'object' && parsedUser !== null) {
+                                return parsedUser;
+                            } else {
+                                throw new Error('Parsed user is not an object');
+                            }
                         } catch (error) {
                             console.error("Error parsing user JSON:", error);
+                            localStorage.removeItem('user'); // Elimina datos corruptos
                             return null;
                         }
                     }

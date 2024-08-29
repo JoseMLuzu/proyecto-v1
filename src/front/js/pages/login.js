@@ -59,7 +59,7 @@ function Login() {
 
                 <div className="password-wrapper">
                     <input
-                        type={showPassword ? "text" : "password"}  // Cambia el tipo de entrada basado en el estado
+                        type={showPassword ? "text" : "password"} 
                         placeholder="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -77,7 +77,7 @@ function Login() {
 
                 <button className='submit btn btn-primary' type="submit">Iniciar sesión</button>
                 {error && <p className='error'>{error}</p>}
-                <p className='forgot'>¿Olvidaste tu contraseña? <a href="/forgot-password">Recupérala aquí</a></p>
+                <p className='forgot'>¿Olvidaste tu contraseña? <a href="/recovery-password">Recupérala aquí</a></p>
             </form>
         </div>
     );
