@@ -11,6 +11,7 @@ const CategoryManager = () => {
     const [totalSpent, setTotalSpent] = useState(0);
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('user_id'); // Obtener user_id del almacenamiento local
 
     useEffect(() => {
         if (!token) {
@@ -64,9 +65,9 @@ const CategoryManager = () => {
 
     const handleAddCategory = async (e) => {
         e.preventDefault();
-        if (newCategory && !categories.some(cat => cat.name === newCategory)) {
+        if (newCategory && !categories.some(cat => cat.name.toLowerCase() === newCategory.toLowerCase())) {
             try {
-                const payload = { name: newCategory, user_id: 1 }; // Ajusta user_id según sea necesario
+                const payload = { name: newCategory, user_id: userId }; // Usar user_id del almacenamiento local
                 const response = await fetch(`${API_HOST}/api/categories`, {
                     method: 'POST',
                     headers: {
@@ -94,13 +95,18 @@ const CategoryManager = () => {
     const handleAddItem = async (e) => {
         e.preventDefault();
         if (newItem.name && newItem.price && newItem.category) {
+            if (isNaN(newItem.price) || parseFloat(newItem.price) <= 0) {
+                console.error('Price must be a positive number');
+                return;
+            }
+
             try {
-                const category = categories.find(cat => cat.name === newItem.category);
+                const category = categories.find(cat => cat.name.toLowerCase() === newItem.category.toLowerCase());
                 if (!category) {
                     console.error('Category not found');
                     return;
                 }
-                
+
                 const response = await fetch(`${API_HOST}/api/items`, {
                     method: 'POST',
                     headers: {
@@ -111,7 +117,7 @@ const CategoryManager = () => {
                         name: newItem.name,
                         price: newItem.price,
                         category_id: category.id,
-                        user_id: 1  // Ajusta user_id según sea necesario
+                        user_id: userId  // Usar user_id del almacenamiento local
                     })
                 });
                 if (response.ok) {

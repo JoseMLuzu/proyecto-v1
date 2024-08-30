@@ -16,10 +16,13 @@ import secrets
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'your_secret_key'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.url_map.strict_slashes = False
 
 # Configuración de CORS
-CORS(app,)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Configuración de base de datos
 db_url = os.getenv("DATABASE_URL")
@@ -296,6 +299,7 @@ def add_category():
         db.session.commit()
         return jsonify(new_category.serialize()), 201
     except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
 # Ruta para obtener todas las categorías
@@ -320,6 +324,7 @@ def delete_category(category_id):
         db.session.commit()
         return jsonify({"msg": "Category deleted successfully"}), 200
     except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
 # Ruta para agregar ítem
@@ -335,6 +340,7 @@ def add_item():
         db.session.commit()
         return jsonify(new_item.serialize()), 201
     except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
 # Ruta para obtener todos los ítems
@@ -359,6 +365,7 @@ def delete_item(item_id):
         db.session.commit()
         return jsonify({"msg": "Item deleted successfully"}), 200
     except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':

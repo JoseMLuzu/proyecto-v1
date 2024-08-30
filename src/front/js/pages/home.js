@@ -33,7 +33,7 @@ export const Home = () => {
         {
             text: (
                 <span>
-                    Thanks to <span className="yellow">FinTrack</span>, I now have <span className="yellow">better control</span> <br></br>over my monthly expenses.
+                    Thanks to <span className="yellow">LogTrack</span>, I now have <span className="yellow">better control</span> <br></br>over my monthly expenses.
                 </span>
             ),
             author: (
@@ -70,7 +70,7 @@ export const Home = () => {
                     </div>
                     <div className="col-md-6 d-flex flex-column align-items-center justify-content-center mb-5">
                         <div className="image-top text-center">
-                            <h1 className="secondTittle mb-5">Welcome to <span className="yellow">FinTrack</span></h1>
+                            <h1 className="secondTittle mb-5">Welcome to <span className="yellow">LogTrack</span></h1>
                             <img src='https://cdn.prod.website-files.com/5e51b3b0337309d672efd94c/5e5346352c16e8d69e1649f2_cover_hero-1.svg' alt="Hero Image" className="img-fluid" />
                         </div>
                     </div>

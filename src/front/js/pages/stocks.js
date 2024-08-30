@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
-import '../../styles/stocks.css';
+import React, { useEffect, useState } from 'react';  // Importa React y useState para manejar el estado del componente
+import { Line } from 'react-chartjs-2';  // Importa el componente Line de react-chartjs-2 para gráficos de línea
+import 'chart.js/auto';  // Importa Chart.js para la creación de gráficos
+import '../../styles/stocks.css';  // Importa el archivo CSS para estilos personalizados
 
+// Mapa de logos de empresas para los símbolos de acciones
 const logoMap = {
   AAPL: 'https://logo.clearbit.com/apple.com',
   MSFT: 'https://logo.clearbit.com/microsoft.com',
@@ -37,13 +38,14 @@ const logoMap = {
 };
 
 const StockTracker = () => {
-  const [stocks, setStocks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showTopButton, setShowTopButton] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [orderBy, setOrderBy] = useState('name');
+  const [stocks, setStocks] = useState([]);  // Estado para almacenar los datos de las acciones
+  const [loading, setLoading] = useState(true);  // Estado para controlar el estado de carga
+  const [error, setError] = useState(null);  // Estado para manejar errores
+  const [showTopButton, setShowTopButton] = useState(false);  // Estado para mostrar el botón de "Scroll to Top"
+  const [searchQuery, setSearchQuery] = useState('');  // Estado para manejar la búsqueda de acciones
+  const [orderBy, setOrderBy] = useState('name');  // Estado para manejar el orden de las acciones
 
+  // Lista de símbolos de acciones
   const stockSymbols = [
     'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'FB', 'NFLX', 'NVDA', 'DIS',
     'MA', 'JPM', 'HD', 'PG', 'KO', 'PEP', 'UNH', 'MRK', 'PFE',
@@ -52,63 +54,66 @@ const StockTracker = () => {
   ];
 
   useEffect(() => {
-    let isMounted = true;
+    let isMounted = true;  // Controla si el componente sigue montado
 
     const fetchStocks = async () => {
       try {
         if (!isMounted) return;
 
         setLoading(true);
+        // Crea una solicitud para obtener datos de cada símbolo de acción
         const symbolQueries = stockSymbols.map(symbol =>
           fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=cr84anhr01qptfa330p0cr84anhr01qptfa330pg`)
             .then(response => response.json())
-            .then(data => ({ symbol, ...data }))
+            .then(data => ({ symbol, ...data }))  // Combina el símbolo con los datos obtenidos
         );
-        const stockData = await Promise.all(symbolQueries);
+        const stockData = await Promise.all(symbolQueries);  // Espera a que se completen todas las solicitudes
 
         if (isMounted) {
-          setStocks(stockData);
+          setStocks(stockData);  // Establece los datos de las acciones en el estado
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message);
+          setError(err.message);  // Establece el mensaje de error si ocurre un problema
         }
       } finally {
         if (isMounted) {
-          setLoading(false);
+          setLoading(false);  // Establece el estado de carga a falso
         }
       }
     };
 
-    fetchStocks();
-    const intervalId = setInterval(fetchStocks, 60000);
+    fetchStocks();  // Llama a la función para obtener los datos
+    const intervalId = setInterval(fetchStocks, 60000);  // Refresca los datos cada minuto
 
     return () => {
-      isMounted = false;
-      clearInterval(intervalId);
+      isMounted = false;  // Limpia el estado de montaje
+      clearInterval(intervalId);  // Limpia el intervalo de actualización
     };
-  }, [orderBy]);
+  }, [orderBy]);  // Vuelve a ejecutar el efecto si cambia el valor de orderBy
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
-        setShowTopButton(true);
+        setShowTopButton(true);  // Muestra el botón de "Scroll to Top" si el usuario se desplaza hacia abajo
       } else {
-        setShowTopButton(false);
+        setShowTopButton(false);  // Oculta el botón si el usuario está en la parte superior
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);  // Agrega el manejador de eventos de desplazamiento
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll);  // Limpia el manejador de eventos de desplazamiento
     };
   }, []);
 
+  // Filtra las acciones según la consulta de búsqueda
   const filteredStocks = stocks.filter(stock =>
     stock.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Ordena las acciones según el criterio seleccionado
   const sortedStocks = [...filteredStocks].sort((a, b) => {
     if (orderBy === 'name') {
       return a.symbol.localeCompare(b.symbol);
@@ -120,10 +125,12 @@ const StockTracker = () => {
     return 0;
   });
 
+  // Desplaza la vista a la parte superior de la página
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Devuelve los datos para el gráfico de línea
   const chartData = (symbol) => {
     const stock = stocks.find(stock => stock.symbol === symbol);
     if (stock) {
@@ -158,7 +165,7 @@ const StockTracker = () => {
               className="form-control"
               placeholder="Search by symbol..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}  // Actualiza la consulta de búsqueda
             />
           </div>
           <div className="form-group mb-4">
@@ -167,7 +174,7 @@ const StockTracker = () => {
               id="orderBy"
               className="form-control"
               value={orderBy}
-              onChange={(e) => setOrderBy(e.target.value)}
+              onChange={(e) => setOrderBy(e.target.value)}  // Actualiza el criterio de ordenación
             >
               <option value="name">Name (Alphabetical)</option>
               <option value="current_price_asc">Current Price (Ascending)</option>
@@ -177,9 +184,9 @@ const StockTracker = () => {
         </div>
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <div>Loading...</div>  // Muestra un mensaje de carga si los datos están cargando
       ) : error ? (
-        <div>Error loading data: {error}</div>
+        <div>Error loading data: {error}</div>  // Muestra un mensaje de error si ocurre un problema
       ) : (
         <div className="row">
           {sortedStocks.map(stock => (
@@ -191,7 +198,7 @@ const StockTracker = () => {
                       src={logoMap[stock.symbol]}
                       alt={`${stock.symbol} logo`}
                       className="stock-icon me-3"
-                      style={{ width: '30px', height: '30px' }}
+                      style={{ width: '30px', height: '30px' }}  // Estilo del logo
                     />
                     <h5 className="card-title mb-0">{stock.symbol}</h5>
                   </div>
@@ -200,7 +207,7 @@ const StockTracker = () => {
                   <p className="card-text">Low: ${stock.l}</p>
                   <p className="card-text">Open: ${stock.o}</p>
                   <div className="chart-container mb-3">
-                    <Line data={chartData(stock.symbol)} />
+                    <Line data={chartData(stock.symbol)} />  {/* Muestra el gráfico de línea para cada acción */}
                   </div>
                   <a 
                     href={`https://www.marketwatch.com/investing/stock/${stock.symbol.toLowerCase()}`} 
@@ -217,7 +224,7 @@ const StockTracker = () => {
         </div>
       )}
       {showTopButton && (
-        <button  onClick={scrollToTop} className="btn btn-primary scroll-to-top buttonTop">
+        <button onClick={scrollToTop} className="btn btn-primary scroll-to-top buttonTop">
           Scroll to Top
         </button>
       )}

@@ -1,18 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Context } from "../store/appContext";
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
-import '../../styles/crypto.css';
+import { Context } from "../store/appContext";  // Importa el contexto para manejar el estado global
+import { Line } from 'react-chartjs-2';  // Importa el componente Line para gráficos de líneas
+import 'chart.js/auto';  // Importa automáticamente los componentes necesarios de Chart.js
+import '../../styles/crypto.css';  // Importa el archivo CSS para estilos personalizados
 
 function CryptoApp() {
+  // Usa el contexto para acceder al estado global y a las acciones
   const { store, actions } = useContext(Context);
-  const [showTopButton, setShowTopButton] = useState(false);
+  const [showTopButton, setShowTopButton] = useState(false);  // Estado para mostrar el botón de "Scroll to Top"
 
   useEffect(() => {
-    actions.fetchCryptoData(); // Fetch crypto data on component mount and when selectedCurrency changes
+    // Fetch de datos de criptomonedas al montar el componente y cuando cambian orderBy o selectedCurrency
+    actions.fetchCryptoData();
   }, [store.orderBy, store.selectedCurrency]);
 
   useEffect(() => {
+    // Maneja el scroll para mostrar u ocultar el botón "Scroll to Top"
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setShowTopButton(true);
@@ -28,10 +31,12 @@ function CryptoApp() {
     };
   }, []);
 
+  // Filtra los datos de criptomonedas según la búsqueda del usuario
   const filteredCryptoData = store.cryptoData.filter(crypto =>
     crypto.name.toLowerCase().includes(store.searchQuery.toLowerCase())
   );
 
+  // Ordena los datos de criptomonedas según el criterio seleccionado
   const sortedCryptoData = [...filteredCryptoData].sort((a, b) => {
     if (store.orderBy === 'name') {
       return a.name.localeCompare(b.name);
@@ -47,6 +52,7 @@ function CryptoApp() {
     return 0;
   });
 
+  // Genera los datos necesarios para el gráfico de líneas de cada criptomoneda
   const generateSparklineData = (sparkline) => ({
     labels: sparkline.map((_, index) => index),
     datasets: [{
@@ -57,6 +63,7 @@ function CryptoApp() {
     }]
   });
 
+  // Función para desplazar la página hacia arriba suavemente
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

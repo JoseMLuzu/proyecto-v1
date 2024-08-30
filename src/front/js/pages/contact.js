@@ -41,7 +41,7 @@ export const ContactUs = () => {
             <h2 className="contact-title">Contact Us</h2>
             <p className="contact-description">We'd love to hear from you! Please fill out the form below and we'll get in touch with you as soon as possible.</p>
             <h2 className="contact-title">Our Emial </h2>
-            <h3 className="contact-description">fintrack@gmail.com</h3>
+            <h3 className="contact-description">logtrack@gmail.com</h3>
         </div>
     );
 };

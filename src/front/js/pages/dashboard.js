@@ -1,52 +1,54 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Context } from "../store/appContext";
-import { Line } from 'react-chartjs-2';
-import "../../styles/dashboard.css";
+import { Context } from "../store/appContext";  // Importa el contexto para acceder al estado global
+import { Line } from 'react-chartjs-2';  // Importa el componente Line para gráficos de líneas (aunque no se usa en este fragmento)
+import "../../styles/dashboard.css";  // Importa el archivo CSS para estilos personalizados
 
 const Dashboard = () => {
-    const { store, actions } = useContext(Context);
-    const [bitcoinNews, setBitcoinNews] = useState([]);
-    const [financialNews, setFinancialNews] = useState([]);
+    const { store, actions } = useContext(Context);  // Usa el contexto para acceder al estado global y a las acciones
+    const [bitcoinNews, setBitcoinNews] = useState([]);  // Estado para almacenar noticias de Bitcoin
+    const [financialNews, setFinancialNews] = useState([]);  // Estado para almacenar noticias financieras
 
     useEffect(() => {
-        let isMounted = true;
+        let isMounted = true;  // Flag para evitar actualizaciones de estado después de desmontar el componente
 
-        actions.fetchCryptoData();
+        actions.fetchCryptoData();  // Llama a la acción para obtener datos de criptomonedas
 
+        // Función para obtener noticias financieras
         const fetchFinancialNews = async () => {
             try {
                 const response = await fetch(`https://finnhub.io/api/v1/news?category=general&token=cr84anhr01qptfa330p0cr84anhr01qptfa330pg`);
                 const data = await response.json();
                 if (data && data.length > 0 && isMounted) {
-                    setFinancialNews(data.slice(0, 18));
+                    setFinancialNews(data.slice(0, 18));  // Actualiza el estado con las primeras 18 noticias
                 }
             } catch (error) {
-                console.error("Error fetching financial news:", error);
+                console.error("Error fetching financial news:", error);  // Manejo de errores
             }
         };
 
+        // Función para obtener noticias de Bitcoin
         const fetchBitcoinNews = async () => {
             try {
                 const response = await fetch(`https://min-api.cryptocompare.com/data/v2/news/?categories=BTC&api_key=d4ec3931809b61f9f8b10fb5104a4aaf059e393a640b93a0d69b2068b653ce3d`);
                 const data = await response.json();
                 if (data && data.Data && data.Data.length > 0 && isMounted) {
-                    setBitcoinNews(data.Data.slice(0, 18));
+                    setBitcoinNews(data.Data.slice(0, 18));  // Actualiza el estado con las primeras 18 noticias
                 }
             } catch (error) {
-                console.error("Error fetching Bitcoin news:", error);
+                console.error("Error fetching Bitcoin news:", error);  // Manejo de errores
             }
         };
 
-        fetchFinancialNews();
-        fetchBitcoinNews();
+        fetchFinancialNews();  // Llama a la función para obtener noticias financieras
+        fetchBitcoinNews();  // Llama a la función para obtener noticias de Bitcoin
 
         return () => {
-            isMounted = false;
+            isMounted = false;  // Marca el componente como desmontado para evitar actualizaciones de estado
         };
-    }, []);
+    }, []);  // Dependencias vacías para ejecutar el efecto solo una vez al montar el componente
 
-    const favorites = store.cryptoData.filter(crypto => store.favorites.has(crypto.id));
-    const userName = store.user?.name || "Usuario"; // Aquí obtienes el nombre del usuario, o un valor por defecto si no está disponible.
+    const favorites = store.cryptoData.filter(crypto => store.favorites.has(crypto.id));  // Filtra los datos de criptomonedas para mostrar solo las favoritas
+    const userName = store.user?.name || "Usuario";  // Obtiene el nombre del usuario o un valor por defecto si no está disponible
 
     return (
         <div className="container my-5">
